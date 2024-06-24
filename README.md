@@ -46,4 +46,3 @@ Jika Anda ingin berkontribusi, silakan fork repository ini, buat branch fitur ba
 ## Lisensi
 
 Proyek ini dilisensikan di bawah MIT License - lihat file [LICENSE](LICENSE) untuk detail lebih lanjut.
-```
