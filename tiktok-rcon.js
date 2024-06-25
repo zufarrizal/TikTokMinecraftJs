@@ -41,14 +41,13 @@ tiktokLiveConnection
 
 // Event handler for "chat" event
 tiktokLiveConnection.on('chat', (data) => {
-    console.log(`${data.uniqueId} (userId:${data.userId}) writes: ${data.comment}`);
-    rconConnection.send(`say ${data.uniqueId} (userId:${data.userId}) writes: ${data.comment}`);
+    console.log(`${data.uniqueId} : ${data.comment}`);
+    rconConnection.send(`${data.uniqueId} : ${data.comment}`);
 });
 
 // Event handler for "gift" event
 tiktokLiveConnection.on('gift', (data) => {
-    console.log(`${data.uniqueId} (userId:${data.userId}) sends ${data.giftId}`);
-
+    console.log(`${data.uniqueId} sends ${data.giftId} ${data.giftName} x ${data.repeatCount}`);
     switch (data.giftId) {
         case 5655: // Gift Rose = Skeleton
             sendSummonCommand(data, 'Skeleton', 'minecraft:skeleton');
@@ -117,10 +116,10 @@ tiktokLiveConnection.on('gift', (data) => {
             sendLevitationCommand(data);
             break;
         case 5658: // Gift Perfume = Evoker
-            sendGiftCommand(data, 'Evoker', 'minecraft:evoker', 3);
+            sendSummonCommand(data, 'Evoker', 'minecraft:evoker', 3);
             break;
         case 9463: // Gift Fairy wings = Iron Golem
-            sendGiftCommand(data, 'Iron Golem', 'minecraft:iron_golem');
+            sendSummonCommand(data, 'Iron Golem', 'minecraft:iron_golem');
             break;
         case 9371: // Gift Sweet Sheep = Nausea
             sendNauseaCommand(data);
@@ -150,7 +149,7 @@ tiktokLiveConnection.on('gift', (data) => {
             sendServerCrashCommand(data);
             break;
         default:
-            rconConnection.send(`say ${data.uniqueId} (userId:${data.userId}) sends ${data.giftId}`);
+            rconConnection.send(`${data.uniqueId} sends ${data.giftId}`);
             break;
     }
 });
@@ -160,136 +159,118 @@ tiktokLiveConnection.on('gift', (data) => {
 function sendSummonCommand(data, giftName, command, quantity = 1) {
     rconConnection.send(`title @a subtitle {"text":" sent ${data.repeatCount} x ${giftName}", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < data.repeatCount; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send(`execute at @p run summon ${command} ~ ~1 ~`);
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send(`execute at @p run summon ${command} ~ ~1 ~`);
 }
 
 function sendGiveCommand(data, giftName, command, quantity = 1) {
     rconConnection.send(`title @a subtitle {"text":" sent ${data.repeatCount} x ${giftName}", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < data.repeatCount; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send(`execute at @p run give @p ${command}`);
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send(`execute at @p run give @p ${command}`);
 }
 
 function sendNonStreakableSummonCommand(data, giftName, command, quantity = 1) {
     rconConnection.send(`title @a subtitle {"text":"sent ${giftName}", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < quantity; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send(`execute at @p run summon ${command} ~ ~ ~`);
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send(`execute at @p run summon ${command} ~ ~1 ~`);
 }
 
 function sendNonStreakableGiveCommand(data, giftName, command, quantity = 1) {
     rconConnection.send(`title @a subtitle {"text":"sent ${giftName}", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < quantity; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send(`execute at @p run give @p summon ${command} ~ ~ ~`);
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send(`execute at @p run give @p ${command}`);
 }
 
 function sendIronArmorCommand(data) {
     rconConnection.send(`title @a subtitle {"text":" sent ${data.repeatCount} x Iron Armor", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < data.repeatCount; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send(
-            'execute at @p run give @p iron_helmet{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:respiration",lvl:3},{id:"minecraft:aqua_affinity",lvl:1},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p iron_chestplate{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p iron_leggings{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p iron_boots{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:feather_falling",lvl:4},{id:"minecraft:depth_strider",lvl:3},{id:"minecraft:frost_walker",lvl:2},{id:"minecraft:soul_speed",lvl:3},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p iron_axe{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p iron_pickaxe{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p iron_sword{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:fire_aspect",lvl:2},{id:"minecraft:looting",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:sweeping_edge",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p iron_shovel{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p bow{Enchantments:[{id:"minecraft:power",lvl:5},{id:"minecraft:punch",lvl:2},{id:"minecraft:flame",lvl:1},{id:"minecraft:infinity",lvl:1},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send('execute at @p run give @p arrow 64');
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send(
+        'execute at @p run give @p iron_helmet{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:respiration",lvl:3},{id:"minecraft:aqua_affinity",lvl:1},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p iron_chestplate{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p iron_leggings{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p iron_boots{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:feather_falling",lvl:4},{id:"minecraft:depth_strider",lvl:3},{id:"minecraft:frost_walker",lvl:2},{id:"minecraft:soul_speed",lvl:3},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p iron_axe{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p iron_pickaxe{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p iron_sword{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:fire_aspect",lvl:2},{id:"minecraft:looting",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:sweeping_edge",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p iron_shovel{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p bow{Enchantments:[{id:"minecraft:power",lvl:5},{id:"minecraft:punch",lvl:2},{id:"minecraft:flame",lvl:1},{id:"minecraft:infinity",lvl:1},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send('execute at @p run give @p arrow 64');
 }
 
 function sendDiamondArmorCommand(data) {
     rconConnection.send(`title @a subtitle {"text":" sent ${data.repeatCount} x Diamond Armor", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < data.repeatCount; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send(
-            'execute at @p run give @p diamond_helmet{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:respiration",lvl:3},{id:"minecraft:aqua_affinity",lvl:1},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p diamond_chestplate{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p diamond_leggings{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p diamond_boots{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:feather_falling",lvl:4},{id:"minecraft:depth_strider",lvl:3},{id:"minecraft:frost_walker",lvl:2},{id:"minecraft:soul_speed",lvl:3},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p diamond_axe{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p diamond_pickaxe{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p diamond_sword{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:fire_aspect",lvl:2},{id:"minecraft:looting",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:sweeping_edge",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p diamond_shovel{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send(
-            'execute at @p run give @p bow{Enchantments:[{id:"minecraft:power",lvl:5},{id:"minecraft:punch",lvl:2},{id:"minecraft:flame",lvl:1},{id:"minecraft:infinity",lvl:1},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
-        );
-        rconConnection.send('execute at @p run give @p arrow 64');
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send(
+        'execute at @p run give @p diamond_helmet{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:respiration",lvl:3},{id:"minecraft:aqua_affinity",lvl:1},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p diamond_chestplate{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p diamond_leggings{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p diamond_boots{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:fire_protection",lvl:4},{id:"minecraft:blast_protection",lvl:4},{id:"minecraft:projectile_protection",lvl:4},{id:"minecraft:feather_falling",lvl:4},{id:"minecraft:depth_strider",lvl:3},{id:"minecraft:frost_walker",lvl:2},{id:"minecraft:soul_speed",lvl:3},{id:"minecraft:thorns",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p diamond_axe{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p diamond_pickaxe{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p diamond_sword{Enchantments:[{id:"minecraft:sharpness",lvl:5},{id:"minecraft:smite",lvl:5},{id:"minecraft:bane_of_arthropods",lvl:5},{id:"minecraft:fire_aspect",lvl:2},{id:"minecraft:looting",lvl:3},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:sweeping_edge",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p diamond_shovel{Enchantments:[{id:"minecraft:efficiency",lvl:5},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:fortune",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send(
+        'execute at @p run give @p bow{Enchantments:[{id:"minecraft:power",lvl:5},{id:"minecraft:punch",lvl:2},{id:"minecraft:flame",lvl:1},{id:"minecraft:infinity",lvl:1},{id:"minecraft:unbreaking",lvl:3},{id:"minecraft:mending",lvl:1}]}'
+    );
+    rconConnection.send('execute at @p run give @p arrow 64');
 }
 
 function sendLavaPoolCommand(data) {
     rconConnection.send(`title @a subtitle {"text":" sent ${data.repeatCount} x Lava Pool", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < data.repeatCount; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send('execute at @p run fill ~-2 ~-1 ~-2 ~2 ~-1 ~2 lava');
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send('execute at @p run fill ~-2 ~-1 ~-2 ~2 ~-1 ~2 lava');
 }
 
 function sendLevitationCommand(data) {
     rconConnection.send(`title @a subtitle {"text":" sent ${data.repeatCount} x Levitation 5 Detik", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < data.repeatCount; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send('execute at @p run effect give @p minecraft:levitation 5 1 true');
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send('execute at @p run effect give @p minecraft:levitation 5 1 true');
 }
 
 function sendNauseaCommand(data) {
     rconConnection.send(`title @a subtitle {"text":" sent ${data.repeatCount} x Nausea 30 Detik", "color":"white"}`);
     rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
-    for (let i = 0; i < data.repeatCount; i++) {
-        rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
-        rconConnection.send('execute at @p run effect give @p minecraft:nausea 30 1 true');
-    }
+    rconConnection.send(`execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1`);
+    rconConnection.send('execute at @p run effect give @p minecraft:nausea 30 1 true');
 }
 
 function sendRandomTeleportCommand(data) {
@@ -342,38 +323,66 @@ function sendServerCrashCommand(data) {
     }, 1000);
 }
 
-// Event handler for "like" event
+// Variabel untuk menyimpan data uniqueId dan likeCount
+let likeData = [];
+
+// Fungsi untuk menangani event "like"
 tiktokLiveConnection.on('like', (data) => {
-    console.log(`${data.uniqueId} liked the stream. Total likes: ${data.likeCount}`);
-    rconConnection.send(`say ${data.uniqueId} liked the stream. Total likes: ${data.likeCount}`);
+    console.log(`${data.uniqueId} liked ${data.likeCount} x`);
+    // Cari apakah uniqueId sudah ada di likeData
+    let user = likeData.find((user) => user.uniqueId === data.uniqueId);
+    if (user) {
+        // Jika uniqueId sudah ada, tambahkan likeCount
+        user.likeCount += data.likeCount;
+    } else {
+        // Jika uniqueId belum ada, tambahkan objek baru ke likeData
+        likeData.push({ uniqueId: data.uniqueId, likeCount: data.likeCount });
+    }
+
+    // Memeriksa apakah likeCount untuk user tersebut mencapai 100
+    if (user && user.likeCount >= 100) {
+        // Mengirim pesan jika likeCount mencapai 100
+        rconConnection.send(`title @a subtitle {"text":" sent Zombie", "color":"white"}`);
+        rconConnection.send(`title @a title {"text":"${data.uniqueId}", "color":"yellow"}`);
+        // rconConnection.send(`${user.uniqueId} liked the stream ${user.likeCount} times`);
+        rconConnection.send('execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1');
+        rconConnection.send(`execute at @p run summon minecraft:zombie ~ ~ ~ {CustomName:${user.uniqueId}}`);
+
+        // Mereset likeCount untuk user tersebut
+        user.likeCount = 0;
+    }
 });
 
 // Event handler for "follow" event
 tiktokLiveConnection.on('follow', (data) => {
     console.log(`${data.uniqueId} followed`);
-    rconConnection.send(`say ${data.uniqueId} followed`);
+    rconConnection.send(`${data.uniqueId} followed`);
+    rconConnection.send('execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1');
+    rconConnection.send(`execute at @p run give @p minecraft:enchanted_golden_apple`);
 });
 
 // Event handler for "share" event
 tiktokLiveConnection.on('share', (data) => {
     console.log(`${data.uniqueId} shared the stream`);
-    rconConnection.send(`say ${data.uniqueId} shared the stream`);
+    rconConnection.send(`${data.uniqueId} shared the stream`);
 });
 
 // Event handler for "connect" event
 tiktokLiveConnection.on('connect', () => {
     console.log('Connected to TikTok Live');
-    rconConnection.send('say Connected to TikTok Live');
+    rconConnection.send('execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1');
+    rconConnection.send('Connected to TikTok Live');
 });
 
 // Event handler for "disconnect" event
 tiktokLiveConnection.on('disconnect', () => {
     console.log('Disconnected from TikTok Live');
-    rconConnection.send('say Disconnected from TikTok Live');
+    rconConnection.send('execute at @p run playsound minecraft:entity.experience_orb.pickup master @a ~ ~ ~ 10 1');
+    rconConnection.send('Disconnected from TikTok Live');
 });
 
 // Event handler for errors
 tiktokLiveConnection.on('error', (err) => {
     console.error('TikTok connection error:', err);
-    rconConnection.send(`say TikTok connection error: ${err.message}`);
+    rconConnection.send(`TikTok connection error: ${err.message}`);
 });
