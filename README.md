@@ -1,12 +1,16 @@
 # TikTokMinecraftJs
 
-TikTokMinecraftJs adalah proyek integrasi antara TikTok dan Minecraft menggunakan JavaScript. Proyek ini memungkinkan Anda untuk mengontrol server Minecraft melalui komentar di TikTok.
+TikTokMinecraftJs adalah proyek integrasi antara TikTok dan Minecraft menggunakan JavaScript. Proyek ini memungkinkan Anda untuk mengontrol server Minecraft melalui interaksi di TikTok
 
 ## Fitur
 
 - Menghubungkan server Minecraft dengan TikTok
-- Memproses komentar dari TikTok untuk mengontrol Minecraft
 - Implementasi RCON untuk mengirim perintah ke server Minecraft
+- Handler Chat : Menampilkan Chat ke dalam game
+- Handler Follow : Deteksi Follow Akun TikTok
+- Handler Share : Deteksi Share Live TikTok
+- Handler Like : Deteksi Like Live TikTok
+- Handler Gift : Deteksi Gift TikTok
 
 ## Persyaratan
 
